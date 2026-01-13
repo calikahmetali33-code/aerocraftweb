@@ -1,2 +1,363 @@
 # aerocraftweb
 bir site
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRAFTHAVEN |</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+--primary:#00bfff;
+--primary-dark:#0077b6;
+--accent:#48cae4;
+--bg:#020611;
+--glass:rgba(10,25,50,.75);
+--border:rgba(72,202,228,.25);
+--text:#fff;
+--muted:#9bbcd1;
+--success:#00ff9d;
+--discord:#5865F2;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:Inter,sans-serif;
+background:radial-gradient(circle at top,#031634,#020611 70%);
+color:var(--text);
+overflow-x:hidden;
+}
+
+canvas{position:fixed;inset:0;z-index:-1}
+
+nav{
+position:fixed;top:0;width:100%;
+padding:15px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(2,6,17,.85);
+backdrop-filter:blur(16px);
+border-bottom:1px solid var(--border);
+z-index:1000;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+.nav-brand img{height:42px}
+.nav-brand span{
+font-family:Rajdhani;
+font-size:1.6rem;
+font-weight:800;
+}
+.nav-menu{display:flex;gap:25px;align-items:center}
+.nav-item{
+font-family:Rajdhani;
+font-weight:700;
+cursor:pointer;
+color:var(--muted);
+transition:.3s;
+}
+.nav-item:hover{color:#fff}
+
+.btn{
+padding:12px 30px;
+border-radius:40px;
+font-family:Rajdhani;
+font-weight:700;
+cursor:pointer;
+border:none;
+color:white;
+background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+box-shadow:0 0 25px rgba(0,191,255,.35);
+transition:.35s;
+}
+.btn:hover{
+transform:scale(1.08);
+box-shadow:0 0 40px rgba(72,202,228,.7);
+}
+.btn-discord{
+background:var(--discord);
+box-shadow:0 0 25px rgba(88,101,242,.6);
+}
+
+.page{display:none;padding-top:120px;min-height:100vh;animation:fade .5s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(15px)}to{opacity:1}}
+
+.hero{
+text-align:center;
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+.hero img{
+width:200px;
+margin-bottom:10px;
+animation:float 6s ease-in-out infinite;
+filter:drop-shadow(0 0 35px rgba(72,202,228,.5));
+}
+@keyframes float{50%{transform:translateY(-18px)}}
+.hero h1{
+font-family:Rajdhani;
+font-size:clamp(3rem,6vw,4.8rem);
+background:linear-gradient(135deg,#fff,var(--accent));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+margin-bottom:10px;
+}
+.hero p{
+color:var(--muted);
+max-width:700px;
+margin:20px auto 35px;
+}
+.hero .actions{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+
+.container{max-width:1200px;margin:auto;padding:20px}
+.section-title{text-align:center;margin-bottom:50px}
+.section-title h2{font-family:Rajdhani;font-size:3rem}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:30px;
+}
+.card{
+background:var(--glass);
+border:1px solid var(--border);
+border-radius:16px;
+overflow:hidden;
+transition:.4s;
+}
+.card:hover{
+transform:translateY(-12px);
+box-shadow:0 25px 60px rgba(0,0,0,.6);
+}
+.card img{width:100%;height:180px;object-fit:cover}
+.card-body{padding:25px;text-align:center}
+.card h3{font-family:Rajdhani;font-size:1.8rem}
+.card p{color:var(--muted);margin:10px 0 20px}
+
+.wiki{
+display:grid;
+grid-template-columns:260px 1fr;
+gap:30px;
+}
+.wiki-sidebar{
+background:var(--glass);
+border:1px solid var(--border);
+border-radius:12px;
+padding:20px;
+}
+.wiki-link{
+display:block;
+padding:12px;
+margin-bottom:6px;
+border-radius:8px;
+cursor:pointer;
+color:var(--muted);
+transition:.3s;
+}
+.wiki-link.active,.wiki-link:hover{
+background:rgba(72,202,228,.15);
+color:#fff;
+}
+.wiki-content{
+background:var(--glass);
+border:1px solid var(--border);
+border-radius:12px;
+padding:35px;
+}
+
+.faq-item{
+background:var(--glass);
+border:1px solid var(--border);
+border-radius:10px;
+margin-bottom:15px;
+}
+.faq-header{
+padding:18px;
+cursor:pointer;
+font-weight:600;
+}
+.faq-content{
+max-height:0;
+overflow:hidden;
+padding:0 18px;
+color:var(--muted);
+transition:.3s;
+}
+.faq-item.open .faq-content{
+padding:15px 18px;
+max-height:200px;
+}
+
+#toast{
+position:fixed;
+top:90px;right:20px;
+background:rgba(0,255,157,.15);
+border:1px solid var(--success);
+color:var(--success);
+padding:15px 20px;
+border-radius:10px;
+font-family:Rajdhani;
+font-weight:700;
+display:none;
+}
+
+footer{
+text-align:center;
+padding:50px 20px;
+border-top:1px solid var(--border);
+background:#01030a;
+}
+footer img{height:40px;opacity:.8}
+footer p{color:#6fa3c7;margin-top:15px}
+footer span{
+display:block;
+margin-top:10px;
+font-family:Rajdhani;
+color:var(--accent);
+letter-spacing:2px;
+}
+
+@media(max-width:900px){
+.wiki{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars">AEROCRAFT</canvas>
+<div id="toast">IP Adresi başarı ile kopyalandı, maceraya katıl!</div>
+
+<nav>
+<div class="nav-brand" onclick="show('home')">
+<img src="https://i.imgur.com/3bmo64B.png">
+<span></span>
+</div>
+<div class="nav-menu">
+<div class="nav-item" onclick="show('home')">Ana Sayfa</div>
+<div class="nav-item" onclick="show('store')">Mağaza</div>
+<div class="nav-item" onclick="show('wiki')">Wiki</div>
+<div class="nav-item" onclick="show('faq')">SSS</div>
+<a class="btn btn-discord" href="#" target="_blank">
+<i class="fa-brands fa-discord"></i> Discord
+</a>
+</div>
+</nav>
+
+<section id="home" class="page active">
+<div class="hero">
+<img src="https://i.imgur.com/3bmo64B.png">
+<h1>yeni bir aerocraft deneyimi</h1>
+<p>aerocraft ile modern, adil ve güçlü bir Minecraft deneyimine hazır ol.</p>
+<div class="actions">
+<button class="btn" onclick="copyIP()">aerocraft.progamer.me</button>
+<a class="btn btn-discord" href="#" target="_blank">DISCORD</a>
+</div>
+</div>
+</section>
+
+<section id="store" class="page">
+<div class="container">
+<div class="section-title"><h2>MAĞAZA</h2></div>
+<div class="grid">
+<div class="card"><img src="https://i.imgur.com/2sIQrfh.png"><div class="card-body"><h3>Survival</h3><p>VIP, kasa ve ayrıcalıklar</p><button class="btn">ÜRÜNLER</button></div></div>
+<div class="card"><img src="https://i.imgur.com/cCroJSv.png"><div class="card-body"><h3>BoxPvP</h3><p>Kitler ve coin paketleri</p><button class="btn">ÜRÜNLER</button></div></div>
+<div class="card"><img src="https://i.imgur.com/DzbUH14.png"><div class="card-body"><h3>Skyblock</h3><p>Ada geliştirmeleri</p><button class="btn">ÜRÜNLER</button></div></div>
+</div>
+</div>
+</section>
+
+<section id="wiki" class="page">
+<div class="container wiki">
+<div class="wiki-sidebar">
+<div class="wiki-link active">Genel Bilgiler</div>
+<div class="wiki-link">Oyuna Başlama</div>
+<div class="wiki-link">Kurallar</div>
+<div class="wiki-link">Rütbeler</div>
+<div class="wiki-link">Teknik</div>
+<div class="wiki-link">Destek</div>
+</div>
+<div class="wiki-content">
+<h2>aerocraft Wiki</h2>
+<p>serocraft, adil oyun anlayışını merkezine alan modern bir Minecraft sunucusudur.</p>
+<ul style="margin-top:15px;color:var(--muted)">
+<li>✔ Java Edition desteklenir</li>
+<li>✔ Hileye sıfır tolerans</li>
+<li>✔ Dengeli ekonomi</li>
+<li>✔ Aktif yetkili ekibi</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="faq" class="page">
+<div class="container">
+<div class="section-title"><h2>SIKÇA SORULAN SORULAR</h2></div>
+
+<div class="faq-item">
+<div class="faq-header" onclick="toggleFAQ(this)">BlueProject nedir?</div>
+<div class="faq-content">Adil ve eğlenceli bir Minecraft sunucusudur.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-header" onclick="toggleFAQ(this)">Hangi sürüm destekleniyor?</div>
+<div class="faq-content">Minecraft Java Edition (1.16.5+).</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-header" onclick="toggleFAQ(this)">Hile serbest mi?</div>
+<div class="faq-content">Hayır. Tüm hileler kalıcı ban sebebidir.</div>
+</div>
+
+</div>
+</section>
+
+<footer>
+<img src="https://i.imgur.com/3bmo64B.png">
+<p>© 2025 aerocraft. Tüm hakları saklıdır.</p>
+<span>POWERED BY AEROCRAFT</span>
+</footer>
+
+<script>
+function show(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+window.scrollTo(0,0);
+}
+
+function copyIP(){
+navigator.clipboard.writeText("oyna.blueproject.tr");
+const t=document.getElementById("toast");
+t.style.display="block";
+setTimeout(()=>t.style.display="none",3000);
+}
+
+function toggleFAQ(el){
+el.parentElement.classList.toggle("open");
+}
+
+const c=document.getElementById("stars"),x=c.getContext("2d");
+function r(){c.width=innerWidth;c.height=innerHeight}
+window.onresize=r;r();
+let s=[...Array(160)].map(()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2}));
+(function a(){
+x.clearRect(0,0,c.width,c.height);
+s.forEach(e=>{
+e.y-=.3;if(e.y<0)e.y=c.height;
+x.fillStyle="white";
+x.beginPath();x.arc(e.x,e.y,e.r,0,7);x.fill();
+});
+requestAnimationFrame(a);
+})();
+</script>
+
+</body>
+</html>
